@@ -15,10 +15,15 @@ A CLI tool that routes requests to various AI models through a unified interface
 
 ```bash
 # Clone and install
-git clone <repo-url>
+git clone https://github.com/jbelluche/ai-router.git
 cd ai-router
-bun install
-bun link
+./install.sh
+```
+
+To uninstall:
+
+```bash
+./uninstall.sh
 ```
 
 ## Configuration
