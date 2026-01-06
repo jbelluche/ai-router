@@ -2,15 +2,6 @@
 
 A CLI tool that routes requests to various AI models through a unified interface. Access OpenAI, Google, Anthropic, Meta, Mistral, and 100+ other models with a single tool.
 
-## Features
-
-- **Text Generation** - GPT-4o, Claude, Gemini, Llama, and more
-- **Image Generation** - DALL-E 3, Gemini 2.5 Flash, Stable Diffusion
-- **Audio Generation** - Text-to-speech via OpenAI
-- **Streaming Support** - Stream text responses in real-time
-- **Multiple Providers** - OpenAI, Google, and OpenRouter (100+ models)
-- **JSON Output** - Structured output for easy parsing by other tools
-
 ## Installation
 
 ```bash
