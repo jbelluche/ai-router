@@ -1,0 +1,20 @@
+{
+  "name": "ai-router",
+  "version": "1.0.0",
+  "module": "index.ts",
+  "type": "module",
+  "bin": {
+    "ai-router": "./index.ts"
+  },
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
