@@ -5,8 +5,10 @@ import {
   initConfig,
   setConfigValue,
   getConfigPath,
+  getProviderConfig,
 } from "../../config";
 import { CLIError, ConfigError } from "../../utils/errors";
+import { fetchAndCachePricing } from "../../utils/pricing";
 
 export async function handleConfig(
   subcommand: ConfigSubcommand | undefined,
@@ -25,9 +27,12 @@ export async function handleConfig(
     case "path":
       handleConfigPath();
       break;
+    case "refresh-pricing":
+      await handleRefreshPricing();
+      break;
     default:
       throw new CLIError(
-        `Unknown config subcommand: ${subcommand}. Use 'init', 'show', 'set', or 'path'.`
+        `Unknown config subcommand: ${subcommand}. Use 'init', 'show', 'set', 'path', or 'refresh-pricing'.`
       );
   }
 }
@@ -100,4 +105,27 @@ async function handleConfigSet(args: string[]): Promise<void> {
 
 function handleConfigPath(): void {
   console.log(getConfigPath());
+}
+
+async function handleRefreshPricing(): Promise<void> {
+  const config = await loadConfig();
+  const openrouterConfig = getProviderConfig(config, "openrouter");
+
+  if (!openrouterConfig?.apiKey) {
+    throw new CLIError(
+      "OpenRouter API key required to fetch pricing.\n" +
+      "Set it with: ai-router config set openrouter.apiKey <key>"
+    );
+  }
+
+  console.log("Fetching model pricing from OpenRouter...");
+
+  try {
+    const cache = await fetchAndCachePricing(openrouterConfig.apiKey);
+    const modelCount = Object.keys(cache.models).length;
+    console.log(`Cached pricing for ${modelCount} models.`);
+    console.log(`Cache expires in ${cache.ttlHours} hours.`);
+  } catch (err) {
+    throw new CLIError(`Failed to fetch pricing: ${err instanceof Error ? err.message : err}`);
+  }
 }

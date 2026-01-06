@@ -18,6 +18,8 @@ export interface CLIOptions {
   maxTokens?: string;
   systemPrompt?: string;
   n?: string;
+  maxCost?: string;
+  showCost?: boolean;
 }
 
 export type Command =
@@ -30,7 +32,7 @@ export type Command =
   | "help"
   | undefined;
 
-export type ConfigSubcommand = "init" | "show" | "set" | "path";
+export type ConfigSubcommand = "init" | "show" | "set" | "path" | "refresh-pricing";
 export type ProvidersSubcommand = "list" | "info";
 
 export interface ParsedCLI {
@@ -61,6 +63,8 @@ export function parseCliArgs(args: string[]): ParsedCLI {
       "max-tokens": { type: "string" },
       "system-prompt": { type: "string" },
       n: { type: "string" },
+      "max-cost": { type: "string" },
+      "show-cost": { type: "boolean" },
     },
     allowPositionals: true,
     strict: false,
@@ -78,6 +82,8 @@ export function parseCliArgs(args: string[]): ParsedCLI {
       ...values,
       maxTokens: values["max-tokens"] as string | undefined,
       systemPrompt: values["system-prompt"] as string | undefined,
+      maxCost: values["max-cost"] as string | undefined,
+      showCost: values["show-cost"] as boolean | undefined,
     } as CLIOptions,
   };
 }
@@ -99,11 +105,14 @@ OPTIONS:
       --max-tokens <n>     Maximum tokens to generate
   -s, --stream             Stream the response
       --json               Output in JSON format
+      --max-cost <amount>  Maximum cost in USD (e.g., 0.10) [default: from config]
+      --show-cost          Show cost estimate before/after request
   -h, --help               Show this help
 
 EXAMPLES:
   ai-router generate-text --prompt "Write a haiku about coding"
   ai-router generate-text -p openai --prompt "Explain quantum computing" --stream
+  ai-router generate-text --prompt "Hello" --max-cost 0.05 --show-cost
 `);
   } else if (command === "generate-image") {
     console.log(`
@@ -176,12 +185,14 @@ SUBCOMMANDS:
   show              Display current configuration
   set <key> <val>   Set a configuration value
   path              Show config file path
+  refresh-pricing   Fetch and cache model pricing from OpenRouter
 
 EXAMPLES:
   ai-router config init
   ai-router config set openai.apiKey sk-xxx
   ai-router config set defaultProvider google
   ai-router config show
+  ai-router config refresh-pricing
 `);
   } else if (command === "providers") {
     console.log(`

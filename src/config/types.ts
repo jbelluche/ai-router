@@ -26,6 +26,22 @@ export interface LoggingConfig {
   file?: string;
 }
 
+export interface CostConfig {
+  maxCostPerQuery: number; // Maximum cost in USD per query (0 = unlimited)
+  warnThreshold: number;   // Warn if cost exceeds this amount
+}
+
+export interface CachedModelPricing {
+  input: number;   // per 1M tokens (converted from per-token)
+  output: number;  // per 1M tokens
+}
+
+export interface PricingCache {
+  lastUpdated: number;  // timestamp in ms
+  ttlHours: number;     // cache TTL in hours
+  models: Record<string, CachedModelPricing>;
+}
+
 export interface RouterConfig {
   version: string;
   defaultProvider: string;
@@ -37,6 +53,8 @@ export interface RouterConfig {
   };
   output: OutputConfig;
   logging?: LoggingConfig;
+  cost?: CostConfig;
+  pricing?: PricingCache;
 }
 
 export const DEFAULT_CONFIG: RouterConfig = {
@@ -80,5 +98,9 @@ export const DEFAULT_CONFIG: RouterConfig = {
   },
   logging: {
     level: "info",
+  },
+  cost: {
+    maxCostPerQuery: 0.10, // Default max $0.10 per query
+    warnThreshold: 0.05,   // Warn if over $0.05
   },
 };
