@@ -162,7 +162,3 @@ bun run typecheck
 # Run tests
 bun test
 ```
-
-## License
-
-MIT
